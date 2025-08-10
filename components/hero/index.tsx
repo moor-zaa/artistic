@@ -16,8 +16,8 @@ const Hero = () => {
 
     useTextAnimation({ selector: `#${headingId}`, duration: 1 })
     useTextAnimation({ selector: `#${descriptionId}`, delay: 1 })
-    useFadeIn({ selector: '.primary-btn', delay: 2 })
-    useFadeIn({ selector: '.secondary-btn', delay: 2 })
+    useFadeIn({ selector: '#hero-primary-btn', delay: 2 })
+    useFadeIn({ selector: '#hero-secondary-btn', delay: 2 })
 
     return (
         <div className='flex items-center flex-col text-center justify-center h-dvh overflow-hidden'>
@@ -28,8 +28,8 @@ const Hero = () => {
             <p id={descriptionId}>Artists can display their masterpieces and buyers can discover and </p>
 
             <div className="flex">
-                <Button className='primary-btn' label='Join for $999/m' />
-                <Button className='secondary-btn' label='Read more' color='secondary' />
+                <Button id='hero-primary-btn' label='Join for $999/m' />
+                <Button id='hero-secondary-btn' label='Read more' color='secondary' />
             </div>
         </div>
     )

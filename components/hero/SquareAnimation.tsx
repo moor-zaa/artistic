@@ -1,118 +1,160 @@
 "use client"
 
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import Tag from '@/common/tag';
-import useFadeIn from '@/hooks/useFadeIn';
 import useBounceIn from '@/hooks/useBounceIn';
+import { ScrollTrigger } from 'gsap/all';
 
+gsap.registerPlugin(ScrollTrigger)
 
 
 const SquareAnimation = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const squareRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+    const boxShadow = "rgba(0, 0, 0, 0.3) 0px 4px 15px";
+
+    const initialSpread = [
+        { x: -240, y: 3, r: -8 },
+        { x: -160, y: -30, r: -12 },
+        { x: -80, y: 0, r: -2 },
+        { x: 0, y: 0, r: 2 },
+        { x: 80, y: 0, r: 6 },
+        { x: 160, y: 10, r: 10 },
+        { x: 240, y: -20, r: 15 },
+    ];
+    const secondSpread = [
+        { x: 0, y: 300, r: 0 },
+        { x: 100, y: 360, r: 0 },
+        { x: 200, y: 420, r: 0 },
+        { x: 300, y: 480, r: 0 },
+        { x: 400, y: 540, r: 0 },
+        { x: 500, y: 600, r: 0 },
+        { x: 600, y: 660, r: 0 },
+    ];
+
+
     useGSAP(() => {
-        const squares = squareRefs.current.filter(Boolean);
+        const ctx = gsap.context(() => {
 
-        // Initial setup - all squares at bottom center, stacked
-        gsap.set(squares, {
-            x: 0,
-            y: 200,
-            opacity: 0,
-            scale: 0.5,
-            rotation: 20
-        });
+            const squares = squareRefs.current.filter(Boolean);
 
-        // Create timeline
-        const tl = gsap.timeline();
-
-        // Animation sequence
-        tl
-            // Phase 1: Squares appear from bottom as a single stack
-            .to(squares, {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.8,
-                ease: "back.out(1.7)",
-            })
-            .to(squares[0], {
-                x: -240,
-                y: 3,
-                duration: 0.6,
-                rotation: -8,
-                ease: "power2.out"
-            }, "spread")
-            .to(squares[1], {
-                x: -160,
-                y: -30,
-                rotation: -12,
-                duration: 0.6,
-                ease: "power2.out"
-            }, "spread")
-            .to(squares[2], {
-                x: -80,
-                rotation: -2,
-                duration: 0.6,
-                ease: "power2.out"
-            }, "spread")
-            .to(squares[3], {
+            // Initial setup - all squares at bottom center, stacked
+            gsap.set(squares, {
                 x: 0,
-                y: 0,
-                rotation: 2,
-                duration: 0.6,
-                ease: "power2.out"
-            }, "spread")
-            .to(squares[4], {
-                x: 80,
-                rotation: 6,
-                duration: 0.6,
-                ease: "power2.out"
-            }, "spread")
-            .to(squares[5], {
-                x: 160,
-                y: 10,
-                rotation: 10,
-                duration: 0.6,
-                ease: "power2.out"
-            }, "spread")
-            .to(squares[6], {
-                x: 240,
-                y: -20,
-                rotation: 15,
-                duration: 0.6,
-                ease: "power2.out"
-            }, "spread");
+                y: 200,
+                opacity: 0,
+                scale: 1.5,
+                rotation: 20
+            });
 
-    }, { scope: containerRef });
+            // Create timeline
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    const scrollTl = gsap.timeline({
+                        scrollTrigger: {
+                            trigger: containerRef.current,
+                            start: 'top top',
+                            end: '+=1200',
+                            scrub: 2,
+                            pin: true,
+                            // markers: true,
+                            toggleActions: 'play pause pause reverse',
+                            anticipatePin: 1,
+                        }
+                    })
+
+                    scrollTl.to(squares, {
+                        x: 0,
+                        y: 200,
+                        rotation: 0,
+                        scale: 1,
+                        boxShadow: "rgba(0,0,0,0.06) 0px 2px 6px",
+                        stagger: { each: 0.05, from: "edges" },
+                    }).to(squares, {
+                        x: 0,
+                        y: 200,
+                        rotation: 0,
+                        scale: 2,
+                        stagger: { each: 0.05, from: "end" },
+                    }).to(squares, {
+                        x: (i: number) => secondSpread[i]?.x ?? 0,
+                        y: (i: number) => secondSpread[i]?.y ?? 0,
+                        rotation: (i: number) => secondSpread[i]?.r ?? 0,
+                        boxShadow,
+                        scale: 2,
+                        // stagger options to taste:
+                        // from: "center" | "edges" | 0..n | "random"
+                        stagger: { each: 0.06, from: "end" },
+                    }, "spread");
+                }
+            });
+
+            // Animation sequence
+            tl
+                // Phase 1: Squares appear from bottom as a single stack
+                .to(squares, {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1.5,
+                    duration: 0.8,
+                    rotation: 20,
+                    ease: "back.out(1.7)",
+                })
+                .to(squares, {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 0.4,
+                    rotation: 0,
+                    ease: "power1.in",
+                }).to(squares, {
+                    x: (i: number) => initialSpread[i]?.x ?? 0,
+                    y: (i: number) => initialSpread[i]?.y ?? 0,
+                    rotation: (i: number) => initialSpread[i]?.r ?? 0,
+                    boxShadow,
+                    // stagger options to taste:
+                    // from: "center" | "edges" | 0..n | "random"
+                    stagger: { each: 0.06, from: "edges" },
+                }, "spread");
+
+
+        })
+        return () => ctx.revert();
+
+    }, []);
+
 
     useBounceIn({ selector: ".mori", delay: 2.3 })
     useBounceIn({ selector: ".negin", delay: 2.5 })
 
 
+
     return (
-        <div className="flex flex-col items-center justify-center">
+        <div
+            className="flex flex-col items-center justify-center relative">
             <div
                 ref={containerRef}
-                className="relative w-96 h-60 flex items-center justify-center"
+                className="w-96 h-76 flex items-center justify-center z-20"
             >
                 {[...Array(7)].map((_, index) => (
                     <div
                         key={index}
                         ref={(el: HTMLDivElement | null) => { squareRefs.current[index] = el }}
-                        className="absolute w-36 h-36 bg-gradient-to-br rounded-xl shadow-lg"
+                        className="absolute w-36 h-36 rounded-xl"
                         style={{
-                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
+                            boxShadow: 'rgba(0, 0, 0, 0.03) 0px 4px 8px'
                         }}
                     >
                         <img src={`/images/art-${index + 1}.webp`} width={300} alt={`ArtImage${index + 1}`} className='object-cover object-center w-full h-full rounded-xl' />
                     </div>
                 ))}
-                <Tag label='Mori' color='#a456eb' className='mori -left-6 -rotate-12 -top-8' />
-                <Tag label='Negin' className='negin -right-28 rotate-12 -top-6' />
+
             </div>
+            <Tag label='Mori' color='#a456eb' className='mori -left-6 -rotate-12 top-2' />
+            <Tag label='Negin' className='negin -right-28 rotate-12 top-4' />
 
 
         </div>
