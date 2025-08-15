@@ -25,14 +25,15 @@ const SquareAnimation = () => {
         { x: 160, y: 10, r: 10 },
         { x: 240, y: -20, r: 15 },
     ];
+
     const secondSpread = [
-        { x: 0, y: 300, r: 0 },
-        { x: 100, y: 360, r: 0 },
-        { x: 200, y: 420, r: 0 },
-        { x: 300, y: 480, r: 0 },
-        { x: 400, y: 540, r: 0 },
-        { x: 500, y: 600, r: 0 },
-        { x: 600, y: 660, r: 0 },
+        { x: 1000, y: 1000, r: 40 },
+        { x: 1000, y: 1000, r: 40 },
+        { x: 1000, y: 1000, r: 40 },
+        { x: 1000, y: 1000, r: 40 },
+        { x: 1000, y: 1000, r: 40 },
+        { x: 1000, y: 1000, r: 40 },
+        { x: 1000, y: 1000, r: 40 },
     ];
 
 
@@ -57,12 +58,11 @@ const SquareAnimation = () => {
                         scrollTrigger: {
                             trigger: containerRef.current,
                             start: 'top top',
-                            end: '+=1200',
+                            end: '+=1600',
                             scrub: 2,
                             pin: true,
                             // markers: true,
-                            toggleActions: 'play pause pause reverse',
-                            anticipatePin: 1,
+                            toggleActions: 'play pause pause reset',
                         }
                     })
 
@@ -85,10 +85,8 @@ const SquareAnimation = () => {
                         rotation: (i: number) => secondSpread[i]?.r ?? 0,
                         boxShadow,
                         scale: 2,
-                        // stagger options to taste:
-                        // from: "center" | "edges" | 0..n | "random"
                         stagger: { each: 0.06, from: "end" },
-                    }, "spread");
+                    }, "spread")
                 }
             });
 
@@ -148,7 +146,7 @@ const SquareAnimation = () => {
                             boxShadow: 'rgba(0, 0, 0, 0.03) 0px 4px 8px'
                         }}
                     >
-                        <img src={`/images/art-${index + 1}.webp`} width={300} alt={`ArtImage${index + 1}`} className='object-cover object-center w-full h-full rounded-xl' />
+                        <img src={`/images/art-${index + 8}.webp`} width={300} alt={`ArtImage${index + 8}`} className='object-cover object-center w-full h-full rounded-xl' />
                     </div>
                 ))}
 

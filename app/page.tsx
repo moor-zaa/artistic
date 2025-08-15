@@ -1,8 +1,7 @@
 import Hero from "@/components/hero";
-import MySection from "@/components/gateway";
 import Showcase from "@/components/showcase";
-import Image from "next/image";
 import Gateway from "@/components/gateway";
+import AmazingText from "@/components/amazing-text";
 
 export default function Home() {
   return (
@@ -13,6 +12,7 @@ export default function Home() {
         <div className="h-screen"></div>
         <Showcase />
         <Gateway />
+        <AmazingText />
       </main>
       <footer className="">
 
